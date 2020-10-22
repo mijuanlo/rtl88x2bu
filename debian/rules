@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+VERSION := $(shell dpkg-parsechangelog | sed -nr '/^Version:/s/Version: (.*:)?(.*)-(.*)/\2/p')
+
+%:
+	dh $@ --with dkms,modaliases
+
+override_dh_install:
+	dh_install build.sh clean core dkms.conf hal halmac.mk ifcfg-wlan0 include Kconfig LICENSE Makefile os_dep platform README.md rtl8822b.mk runwpa wlan0dhcp usr/src/rtl88x2bu-$(VERSION)/
+	# find debian/rtl88x2bu-dkms/usr/src/rtl88x2bu-$(VERSION) -type f -exec chmod 644 {} \;
+
+override_dh_dkms:
+	dh_dkms -V $(VERSION)
+
+override_dh_auto_configure override_dh_auto_build override_dh_auto_test override_dh_auto_install override_dh_auto_c:
